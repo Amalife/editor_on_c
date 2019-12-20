@@ -31,7 +31,6 @@ int main()
         buf[size] = '\0';
         cmd = ft_cmd_template(buf);
         free(buf);
-        i = 0;
         switch(read_n_det(cmd))
         {
             case EXIT_NUM:
@@ -56,6 +55,12 @@ int main()
                 break;
             case INSERT_NUM:
                 r = insert_func(cmd->params, str_list);
+                break;
+            case EDIT_NUM:
+                r = edit_func(cmd->params, str_list);
+                break;
+            case REPLACE_NUM:
+                r = replace_func(cmd->params, str_list);
                 break;
             default:
                 ft_putstr("wrong command\n");

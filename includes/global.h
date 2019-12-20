@@ -18,7 +18,11 @@ enum            e_cmd_list
     WRITE_NUM,
     PRINT_NUM,
     SET_NUM,
-    INSERT_NUM
+    INSERT_NUM,
+    EDIT_NUM,
+    REPLACE_NUM,
+    DELETE_NUM,
+    HELP_NUM
 };
 
 enum            e_err_list

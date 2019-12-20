@@ -39,5 +39,11 @@ int         check_sp_sym(char *str);
 char        *sp_sym_handler(char *str, t_doub_list *str_list, int str_num);
 void        ft_putstrnw(t_node *head, int c, int tabwidth, int fl);
 int         insert_group(t_doub_list *str_list, int str_num);
+int         insert_sym(t_doub_list *str_list, char **params);
+int         edit_func(char **parmas, t_doub_list *str_list);
+int         replace_func(char **params, t_doub_list *str_list);
+void        check_str(char *sample, char *add_str, t_node *head);
+char        *place_str(char *add_str, t_node *head, int k);
+char        *ft_strcat(char *dest, char *src);
 
 #endif

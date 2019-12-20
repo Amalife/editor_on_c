@@ -3,7 +3,8 @@
 #include "global.h"
 
 char        *g_cmd_base[NUM_OF_CMD] = {"exit", "read", "open", "write",
-                                                    "print", "set", "insert"};
+                                        "print", "set", "insert", "edit", 
+                                                "replace", "delete", "help"};
 
 int         ft_count_sp(char *str, int k)
 {
@@ -52,15 +53,18 @@ char        *quote_str(char *str, int k)
 
     i = 0;
     t = count_quotes(str,k);
-    buf = (char*)malloc(sizeof(char) * count_quotes(str, k) + 2);
+    buf = (char*)malloc(sizeof(char) * (t + 2));
     do
     {
         buf[i] = str[k];
         i++;
         k++;
-        t--;
-    } while (t && str[k]);
-    i++;
+    } while ((str[k] != '"' || (str[k+1] != ' ' && str[k+1] != '\t')) && str[k]);
+    if (str[k])
+    {
+        buf[i] = '"';
+        i++;
+    }
     buf[i] = '\0';
     return buf;
 }

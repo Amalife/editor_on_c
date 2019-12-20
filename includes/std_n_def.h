@@ -10,7 +10,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define NUM_OF_CMD 7
+#define NUM_OF_CMD 11
 #define NUM_OF_FLAGS 5
 
 #endif
