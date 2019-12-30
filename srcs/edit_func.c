@@ -13,7 +13,7 @@ int edit_func(char **params, t_doub_list *str_list)
         return PARAMS_ERR;
     if (params[4])
         return PARAMS_ERR;
-    if (ft_strlen(params[3]) == 1)
+    if (strlen(params[3]) == 1)
         sym = params[3][0];
     else
         return PARAMS_ERR;

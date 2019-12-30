@@ -105,7 +105,7 @@ char    *sp_sym_handler(char *str, t_doub_list *str_list, int str_num)
     buf[i] = '\0';
     if (add_new_str(str_list, str_num, buf) == LIST_ADD_ERR)
         return NULL;
-    n = ft_strlen(str);
+    n = strlen(str);
     if (n > k)
     {
         buf = realloc(buf, sizeof(char) * (n - k - 1));
@@ -148,7 +148,7 @@ int     add_new_str(t_doub_list *str_list, int str_num, char *params)
         else if (params[j] == '\n')
             node->str = (char*)malloc(sizeof(char) * 2);
         else
-            node->str = (char*)malloc(sizeof(char) * (ft_strlen(params) - 1));
+            node->str = (char*)malloc(sizeof(char) * (strlen(params) - 1));
         while (params[j])
         {
             while (params[j] == '\\' && params[j+1] == '\\')
@@ -172,7 +172,7 @@ int     add_new_str(t_doub_list *str_list, int str_num, char *params)
         node->str[i] = '\0';
         while (str_num != str_list->head->num && str_num != 0)
             str_list->head = str_list->head->next;
-        node->width = ft_strlen(node->str) + 1;
+        node->width = strlen(node->str) + 1;
         node->num = str_num + 1;
         str_list->str_count++;
         if (str_num == 0)
@@ -218,7 +218,7 @@ int     insert_sym(t_doub_list *str_list, char **params)
     t_node  *save;
     int     i;
 
-    if (ft_strlen(params[3]) == 1)
+    if (strlen(params[3]) == 1)
         sym = params[3][0];
     else
         return PARAMS_ERR;
@@ -230,8 +230,8 @@ int     insert_sym(t_doub_list *str_list, char **params)
     while (str != str_list->head->num)
         str_list->head = str_list->head->next;
     str_list->head->str = realloc(str_list->head->str, sizeof(char) * 
-                                        (ft_strlen(str_list->head->str) + 2));
-    i = ft_strlen(str_list->head->str) + 1;
+                                        (strlen(str_list->head->str) + 2));
+    i = strlen(str_list->head->str) + 1;
     if (pos <= 0)
         pos = 1;
     else if (pos >= str_list->head->width)

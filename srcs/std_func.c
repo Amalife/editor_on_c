@@ -14,23 +14,3 @@ void    ft_putstr(char *str)
         str++;
     }
 }
-
-int     ft_space(char *str, int k)
-{
-    while (str[k] == ' ' || str[k] == '\t')
-        k++;
-    return k;
-}
-
-int     ft_strlen(char *str)
-{
-    int n;
-
-    n = 0;
-    while (*str)
-    {
-        n++;
-        str++;
-    }
-    return n;
-}

@@ -9,7 +9,7 @@ char    *ft_strcat(char *dest, char *src)
 
     i = 0;
     j = 0;
-    dest = realloc(dest, sizeof(char) * (ft_strlen(dest) + ft_strlen(src) + 1));
+    dest = realloc(dest, sizeof(char) * (strlen(dest) + strlen(src) + 1));
     while (dest[i])
         i++;
     while (src[j])
@@ -28,7 +28,7 @@ char    *place_str(char *add_str, t_node *head, int k)
     int     i;
 
     i = 0;
-    buf = (char*)malloc(sizeof(char) * (ft_strlen(head->str) - k + 1));
+    buf = (char*)malloc(sizeof(char) * (strlen(head->str) - k + 1));
     while (i != k)
     {
         buf[i] = head->str[i];
@@ -36,7 +36,7 @@ char    *place_str(char *add_str, t_node *head, int k)
     }
     buf[i] = '\0';
     buf = ft_strcat(buf, add_str);
-    i += ft_strlen(add_str);
+    i += strlen(add_str);
     while (head->str[k])
     {
         buf[i] = head->str[k];
@@ -72,7 +72,7 @@ void    check_str(char *sample, char *add_str, t_node *head)
             buf = place_str(add_str, head, k);
             free(head->str);
             head->str = buf;
-            k += ft_strlen(add_str) - 1;
+            k += strlen(add_str) - 1;
             same = 0;
         }
         i = 0;

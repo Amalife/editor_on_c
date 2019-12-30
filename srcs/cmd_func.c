@@ -2,17 +2,12 @@
 #include "global.h"
 #include "func_pro.h"
 
-int     editor_exit(char **params, t_doub_list *str_list)
+int     editor_exit(t_cmd_list *cmd, t_doub_list *str_list)
 {
-    if (params)
-    {
-        if (params[1])
-            return PARAMS_ERR;
-        else if (params[0] && strcmp(params[0], "force") == 0)
-            str_list->flags[F_CHANGED] = 0;
-        else
-            return PARAMS_ERR;
-    }
+    if (cmd->num_par > 1)
+        return PARAMS_ERR;
+    else if (cmd->num_par == 1 && strcmp(cmd->params[0], "force") == 0)
+        str_list->flags[F_CHANGED] = 0;
     if (str_list->flags[F_CHANGED])
     {
         ft_putstr("The file is not saved\n");
@@ -26,31 +21,8 @@ int     editor_exit(char **params, t_doub_list *str_list)
     return 0;
 }
 
-int     ft_strlen_news(char *str, int cur)
-{
-    while(str[cur] != '\n')
-        cur++;
-    return cur;
-}
-
-int     ft_count_news(char *str)
-{
-    int i;
-
-    i = 0;
-    while (*str)
-    {
-        if(*str == '\n')
-            i++;
-        str++;
-    }
-    return i;
-}
-
 void    list_free(t_doub_list *str_list)
 {
-    if (str_list->str_width)
-        free(str_list->str_width);
     while (str_list->tail)
     {
         if (str_list->tail->prev)
@@ -75,29 +47,31 @@ void    list_free(t_doub_list *str_list)
     }
 }
 
-int     append_to_list(char *buf, t_doub_list *str_list, int c, int i)
+int     append_to_list(char *str, t_doub_list *str_list)
 {
     t_node  *node;
-    int     k;
+    int     size;
+    int     i;
 
-    k = 0;
+    size = 0;
+    i = 0;
     node = (t_node*)malloc(sizeof(t_node));
     if (node && str_list)
     {
-        node->width = str_list->str_width[i] - str_list->str_width[i-1];
-        node->str = (char*)malloc(sizeof(char) * (node->width + 1));
-        while (buf[c] != '\n' && buf)
+        node->width = 0;
+        node->str = (char*)malloc(sizeof(char));
+        while (str[i])
         {
-            if (buf[c] == '\t')
+            size++;
+            if (str[i] == '\t')
                 node->width += str_list->tab_width;
-            node->str[k] = buf[c];
-            k++;
-            c++;
+            node->str = realloc(node->str, sizeof(char) * (size + 1));
+            node->str[size-1] = str[i];
+            i++;
         }
-        node->str[k] = '\n';
-        k++;
-        node->str[k] = '\0';
-        node->num = i;
+        node->str[size] = '\0';
+        node->num = str_list->str_count;;
+        node->width += strlen(node->str);
         node->prev = str_list->tail;
         node->next = NULL;
         if (str_list->tail)
@@ -128,31 +102,37 @@ char    *read_file(FILE *fd)
 
 int     make_list(t_doub_list *str_list, FILE *fd)
 {
-    char        *buf;
-    int         i;
-    int         c;
+    char    *buf;
+    char    *str;
+    int     i;
+    int     c;
 
     list_free(str_list);
     buf = read_file(fd);
     fclose(fd);
-    i = ft_count_news(buf);
-    str_list->str_count = i;
-    str_list->str_width = (int*)malloc(sizeof(int) * (i + 1));
-    str_list->str_width[0] = 0;
-    i = 1;
+    str_list->str_count = 0;
     c = 0;
     while (buf[c])
     {
-        str_list->str_width[i] = ft_strlen_news(buf, c);
-        if (append_to_list(buf, str_list, c, i))
+        i = 0;
+        str_list->str_count++;
+        str = (char*)malloc(sizeof(char));
+        do
+        {
+            i++;
+            str = realloc(str, sizeof(char) * (i + 1));
+            str[i-1] = buf[c];
+            c++;
+        } while (buf[c-1] != '\n' && buf[c]);
+        str[i] = '\0';
+        if (append_to_list(str, str_list))
             return LIST_ADD_ERR;
-        c = str_list->str_width[i] + 1;
-        i++;
+        free(str);
     }
     free (buf);
     if (str_list->flags[F_OPEN])
     {
-        ft_putstr("File opened:");
+        ft_putstr("File opened: ");
         ft_putstr(str_list->file_link);
         ft_putchar('\n');
         str_list->flags[F_OPEN] = 0;
@@ -170,7 +150,7 @@ char    *unqouting(char *str)
 
     j = 0;
     i = 1;
-    buf = (char*)malloc(ft_strlen(str) - 2);
+    buf = (char*)malloc(strlen(str) - 1);
     while (str[i])
     {
         buf[j] = str[i];
@@ -181,42 +161,35 @@ char    *unqouting(char *str)
     return buf;
 }
 
-int     editor_read_n_open(char **params, t_doub_list *str_list)
+int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list)
 {
     FILE    *fd;
-    int     i;
-    int     j;
+    char    *file;
 
-    i = 0;
-    j = 0;
-    if (params[0] == NULL || params[1])
+    if (cmd->num_par != 1)
         return PARAMS_ERR;
     if (str_list->flags[F_CHANGED])
     {
         ft_putstr("You have an unsaved file\n");
         return NOT_SAVED;
     }
-    fd = fopen(unqouting(params[0]), "r+");
+    file = unqouting(cmd->params[0]);
+    fd = fopen(file, "r+");
     if (fd == NULL)
+    {
+        free(file);
         return OPEN_FILE_ERR;
+    }
     if (str_list->flags[F_OPEN])
     {
         if (str_list->file_link)
             free(str_list->file_link);
-        str_list->file_link = (char*)malloc(sizeof(char) * 
-                                        (ft_strlen(params[0]) - 2));
-        while (params[0][i])
-        {
-            if (params[0][i] != '"')
-            {
-                str_list->file_link[j] = params[0][i];
-                j++;
-            }
-            i++;
-        }
-        str_list->file_link[i] = '\0';
+        str_list->file_link = file;
     }
     else
+    {
         str_list->flags[F_CHANGED] = 1;
+        free(file);
+    }
     return make_list(str_list, fd);
 }

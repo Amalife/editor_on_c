@@ -13,6 +13,8 @@ int main()
     t_doub_list *str_list;
 
     str_list = (t_doub_list*)malloc(sizeof(t_doub_list));
+    str_list->tail = NULL;
+    str_list->head = NULL;
     str_list->flags = (int*)calloc(NUM_OF_FLAGS, sizeof(int));
     str_list->file_link = NULL;
     str_list->tab_width = 4;
@@ -29,19 +31,28 @@ int main()
             buf[size-1] = ch;
         }
         buf[size] = '\0';
-        cmd = ft_cmd_template(buf);
+        cmd = (t_cmd_list*)malloc(sizeof(t_cmd_list));
+        cmd_template(buf, cmd);
         free(buf);
+        printf("name: %s\n", cmd->key_word);
+        if (cmd->params)
+            while (cmd->params[i])
+            {
+                printf("the %d argument: %s\n", i, cmd->params[i]);
+                i++;
+            }
+        i = 0;
         switch(read_n_det(cmd))
         {
             case EXIT_NUM:
-                r = editor_exit(cmd->params, str_list);
+                r = editor_exit(cmd, str_list);
                 break;
             case READ_NUM:
-                r = editor_read_n_open(cmd->params, str_list);
+                r = editor_read_n_open(cmd, str_list);
                 break;
             case OPEN_NUM:
                 str_list->flags[F_OPEN] = 1;
-                r = editor_read_n_open(cmd->params, str_list);
+                r = editor_read_n_open(cmd, str_list);
                 break;
             case WRITE_NUM:
                 ft_putstr("saving file\n");
@@ -72,6 +83,7 @@ int main()
                 free(cmd->params[i]);
                 i++;
             }
+        free(cmd->params);
         free(cmd);
     }
     list_free(str_list);

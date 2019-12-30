@@ -44,10 +44,11 @@ enum            e_flags
     F_NO_WRAP
 };
 
-typedef struct  s_cmd
+typedef struct  s_cmd_list
 {
-    char *key_word;
-    char **params;
+    char    *key_word;
+    char    **params;
+    int     num_par;
 }               t_cmd_list;
 
 typedef struct  s_node
@@ -64,7 +65,6 @@ typedef struct  s_doub_list
     t_node  *head;
     t_node  *tail;
     char    *file_link;
-    int     *str_width;
     int     *flags;
     int     str_count;
     int     tab_width;

@@ -1,14 +1,20 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g
+CINCLUDES = -I ./includes
+
 NAME = Zashodaktor
 
-CFILE = ./srcs/*.c
+CFILES = $(wildcard srcs/*.c)
 
-OBJECTS = *.o
+OBJECTS = $(patsubst %.c, %.o, $(CFILES))
 
 all: $(NAME)
 
-$(NAME):
-	gcc -Wall -Wextra -Werror -c $(CFILE) -I./includes
-	gcc -o $(NAME) $(OBJECTS) -I./includes
+$(NAME): $(OBJECTS)
+	$(CC)  $(CFLAGS) -o $@ $(OBJECTS)
+
+%.o : %.c
+	$(CC) $(CFLAGS) $(CINCLUDES) -o $@ -c $^
 
 clean:
 	rm -f $(OBJECTS)
@@ -17,3 +23,4 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
