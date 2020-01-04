@@ -27,12 +27,13 @@ enum            e_cmd_list
 
 enum            e_err_list
 {
-    PARAMS_ERR = -10,
+    PARAMS_ERR = -20,
     OPEN_FILE_ERR,
     LIST_ADD_ERR,
     NOT_SAVED,
     STDIN_ERR,
-    TAB_ERR
+    TAB_ERR,
+    STR_COUNT_ERR
 };
 
 enum            e_flags
@@ -41,7 +42,9 @@ enum            e_flags
     F_CHANGED,
     F_OPEN,
     F_NUM,
-    F_NO_WRAP
+    F_NO_WRAP,
+    F_SIG,
+    F_PRINT,
 };
 
 typedef struct  s_cmd_list

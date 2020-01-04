@@ -9,8 +9,9 @@
 #include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
+#include <signal.h>
 
 #define NUM_OF_CMD 11
-#define NUM_OF_FLAGS 5
+#define NUM_OF_FLAGS 7
 
 #endif

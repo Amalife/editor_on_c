@@ -2,6 +2,8 @@
 #include "func_pro.h"
 #include "global.h"
 
+t_doub_list *str_list;
+
 int main()
 {
     char        *buf;
@@ -10,7 +12,6 @@ int main()
     int         i;
     int         size;
     int         ch;
-    t_doub_list *str_list;
 
     str_list = (t_doub_list*)malloc(sizeof(t_doub_list));
     str_list->tail = NULL;
@@ -18,6 +19,7 @@ int main()
     str_list->flags = (int*)calloc(NUM_OF_FLAGS, sizeof(int));
     str_list->file_link = NULL;
     str_list->tab_width = 4;
+    signal(SIGWINCH, chg_size);
     while (str_list->flags[F_CHANGED] || str_list->flags[F_EXIT] == 0)
     {
         ft_putstr("Editor:");
@@ -59,7 +61,7 @@ int main()
                 str_list->flags[F_CHANGED] = 0;
                 break;
             case PRINT_NUM:
-                r = print(cmd->params, str_list);
+                r = print(cmd, str_list);
                 break;
             case SET_NUM:
                 r = set_func(cmd->params, str_list);
