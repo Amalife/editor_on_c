@@ -2,6 +2,8 @@
 #include "func_pro.h"
 #include "global.h"
 
+int str_num;
+
 int     check_quotes(char *str)
 {
     int i;
@@ -20,159 +22,77 @@ int     check_quotes(char *str)
         return 0;
 }
 
-int     check_sp_sym(char *str)
-{
-    int i;
-    int k;
-    int sp;
-
-    i = 0;
-    k = 0;
-    sp = 0;
-    while (str[k] && sp == 0)
-    {
-        while (str[k] && str[k] == '\\' && sp == 0)
-        {
-            i++;
-            if (str[k+1] == 'n' || str[k+1] == 'r' || str[k+1] == 't')
-                if (i % 2 == 1)
-                    sp = 1;
-            k++;
-        }
-        if (str[k] && sp == 0)
-        {
-            i = 0;
-            k++;
-        }
-    }
-    if (i % 2 == 1 && sp)
-        return 1;
-    else
-        return 0;
-}
-
-char    *sp_sym_handler(char *str, t_doub_list *str_list, int str_num)
+char    *sp_sym_handler(char *str)
 {
     char    *buf;
-    int     i;
     int     k;
-    int     n;
+    int     size;
 
     k = 0;
-    n = 0;
-    i = 0;
-    while ((str[k] != '\\' || str[k+1] != 'n') && str[k])
-        {
-            if (str[k] == '\\' && str[k+1] == 't')
-            {
-                n += 4;
-                k += 2;
-            }
-            else
-            {
-                k++;
-                n++;
-            }
-        }
-    buf = (char*)malloc(sizeof(char) * (n + 2));
-    k = 0;
-    while ((str[k] != '\\' || str[k+1] != 'n') && str[k])
+    size = 0;
+    buf = (char*)malloc(sizeof(char));
+    while (str[k])
     {
-        if (str[k] == '\\' && str[k+1] == 't')
+        size++;
+        buf = realloc(buf, sizeof(char) * (size + 1));
+        if (str[k] == '\\' && str[k+1] == '\\')
         {
-            buf[i] = '\t';
-            i++;
+            buf[size-1] = '\\';
+            k += 2;
+        }
+        else if (str[k] == '\\' && str[k+1] == '"')
+        {
+            buf[size-1] = '"';
+            k += 2;
+        }
+        else if (str[k] == '\\' && str[k+1] == 't')
+        {
+            buf[size-1] = '\t';
             k += 2;
         }
         else if (str[k] == '\\' && str[k+1] == 'r')
         {
-            buf[i] = '\r';
-            i++;
+            buf[size-1] = '\r';
+            k += 2;
+        }
+        else if (str[k] == '\\' && str[k+1] == 'n')
+        {
+            buf[size-1] = '\n';
             k += 2;
         }
         else
         {
-            buf[i] = str[k];
-            i++;
+            buf[size-1] = str[k];
             k++;
         }
     }
-    if (n == 0)
-    {
-        buf[i] = '\n';
-        i++;
-    }
-    buf[i] = '\0';
-    if (add_new_str(str_list, str_num, buf) == LIST_ADD_ERR)
-        return NULL;
-    n = strlen(str);
-    if (n > k)
-    {
-        buf = realloc(buf, sizeof(char) * (n - k - 1));
-        i = 0;
-        k += 2;
-        while (str[k])
-        {
-            buf[i] = str[k];
-            i++;
-            k++;
-        }
-        buf[i] = '\0';
-    }
-    else
-    {
-        buf = (char*)malloc(sizeof(char));
-        buf[0] = '\0';
-    }
+    buf[size] = '\0';
     free (str);
     return buf;
 
 }
 
-int     add_new_str(t_doub_list *str_list, int str_num, char *params)
+int     insert_str(t_doub_list *str_list, char *str)
 {
-    
     t_node  *node;
     t_node  *save;
-    int     i;
-    int     j;
+    int     k;
 
-    i = 0;
-    j = 0;
+    k = 0;
     save = str_list->head;
     node = (t_node*)malloc(sizeof(t_node));
     if (node)
     {
-        if (params[j] == '\0')
-            return 0;
-        else if (params[j] == '\n')
-            node->str = (char*)malloc(sizeof(char) * 2);
-        else
-            node->str = (char*)malloc(sizeof(char) * (strlen(params) - 1));
-        while (params[j])
+        node->str = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+        while (str[k])
         {
-            while (params[j] == '\\' && params[j+1] == '\\')
-            {
-                node->str[i] = '\\';
-                j += 2;
-                i++;
-            }
-            if (params[j])
-            {
-                node->str[i] = params[j];
-                j++;
-                i++;
-            }
+            node->str[k] = str[k];
+            k++;
         }
-        if (node->str[i-1] != '\n')
-        {
-            node->str[i] = '\n';
-            i++;
-        }
-        node->str[i] = '\0';
+        node->str[k] = '\0';
         while (str_num != str_list->head->num && str_num != 0)
             str_list->head = str_list->head->next;
-        node->width = strlen(node->str) + 1;
+        node->width = strlen(node->str);
         node->num = str_num + 1;
         str_list->str_count++;
         if (str_num == 0)
@@ -196,7 +116,9 @@ int     add_new_str(t_doub_list *str_list, int str_num, char *params)
             str_list->head->next = node;
             str_list->head = str_list->head->next->next;
         }
-        ft_putstr("Inserted\n");
+        if (node->num == str_list->str_count)
+            str_list->tail = node;
+        ft_putstr("String inserted\n");
         str_list->flags[F_CHANGED] = 1;
         while (str_list->head)
         {
@@ -207,6 +129,49 @@ int     add_new_str(t_doub_list *str_list, int str_num, char *params)
     else
         return LIST_ADD_ERR;
     str_list->head = save;
+    return 0;
+}
+
+int     add_new_str(t_doub_list *str_list, char *str)
+{
+    char    *buf;
+    int     k;
+    int     size;
+
+    k = 0;
+    size = 0;
+    buf = (char*)malloc(sizeof(char));
+    while (str[k])
+    {
+        size++;
+        buf = realloc(buf, sizeof(char) * (size + 1));
+        buf[size-1] = str[k];
+        if (str[k] == '\n')
+        {
+            buf[size] = '\0';
+            if (insert_str(str_list, buf) == LIST_ADD_ERR)
+            {
+                free(buf);
+                return LIST_ADD_ERR;
+            }
+            free(buf);
+            size = 0;
+            buf = (char*)malloc(sizeof(char));
+            str_num++;
+        }
+        k++;
+    }
+    size++;
+    buf = realloc(buf, sizeof(char) * (size + 1));
+    buf[size-1] = '\n';
+    buf[size] = '\0';
+    if (insert_str(str_list, buf) == LIST_ADD_ERR)
+    {
+        free(buf);
+        return LIST_ADD_ERR;
+    }
+    str_num++;
+    free(buf);
     return 0;
 }
 
@@ -232,23 +197,25 @@ int     insert_sym(t_doub_list *str_list, char **params)
     str_list->head->str = realloc(str_list->head->str, sizeof(char) * 
                                         (strlen(str_list->head->str) + 2));
     i = strlen(str_list->head->str) + 1;
-    if (pos <= 0)
+    if (pos < 0)
         pos = 1;
-    else if (pos >= str_list->head->width)
+    else if (pos > str_list->head->width)
         pos = str_list->head->width;
-    while (i != (pos - 1))
+    while (i != pos)
     {
         str_list->head->str[i] = str_list->head->str[i-1];
         i--;
     }
+    str_list->head->str[i] = str_list->head->str[i-1];
     str_list->head->str[pos-1] = sym;
-    str_list->head = save;
     str_list->head->width++;
+    str_list->head = save;
     str_list->flags[F_CHANGED] = 1;
+    ft_putstr("Symbol inserted\n");
     return 0;
 }
 
-int     insert_group(t_doub_list *str_list, int str_num)
+int     insert_group(t_doub_list *str_list)
 {
     char    *buf;
     int     size;
@@ -267,62 +234,54 @@ int     insert_group(t_doub_list *str_list, int str_num)
         buf[size] = '\0';
         if (strcmp(buf, "\"\"\""))
         {
-            while (check_sp_sym(buf))
-            {
-                buf = sp_sym_handler(buf, str_list, str_num);
-                str_num++;
-            }
-            if (add_new_str(str_list, str_num, buf) == LIST_ADD_ERR)
+            buf = sp_sym_handler(buf);
+            if (add_new_str(str_list, buf) == LIST_ADD_ERR)
             {
                 free(buf);
                 return LIST_ADD_ERR;
             }
-            str_num++;
             free(buf);
         }
-    } while (strcmp(buf, "\"\"\""));
+        else
+            break;
+    } while (1);
     free(buf);
     return 0;
 }
 
-int     insert_func(char **params, t_doub_list *str_list)
+int     insert_func(t_cmd_list *cmd, t_doub_list *str_list)
 {
-    int     str_num;
     char    *buf;
 
     str_num = 0;
-    if (strcmp(params[0], "after") == 0)
+    if (str_list->flags[F_FILE] == 0)
+        return NO_FILE_ERR;
+    if (cmd->num_par == 0 || cmd->num_par > 4)
+        return PARAMS_ERR;
+    if (strcmp(cmd->params[0], "after") == 0)
     {
-        str_num = ft_atoi(params[1]);
-        if (str_num >= 0 && str_num <= str_list->str_count && params[2]
-                                                    && check_quotes(params[2]))
+        str_num = ft_atoi(cmd->params[1]);
+        if (str_num >= 0 && str_num <= str_list->str_count && cmd->num_par == 3
+                                            && check_quotes(cmd->params[2]))
         {
-            if (strcmp(params[2], "\"\"\"") == 0)
-                return insert_group(str_list, str_num);
-            buf = unqouting(params[2]);
-            while (check_sp_sym(buf))
-            {
-                buf = sp_sym_handler(buf, str_list, str_num);
-                str_num++;
-            }
-            if (add_new_str(str_list, str_num, buf) == LIST_ADD_ERR)
+            if (strcmp(cmd->params[2], "\"\"\"") == 0)
+                return insert_group(str_list);
+            buf = unqouting(cmd->params[2]);
+            buf = sp_sym_handler(buf);
+            if (add_new_str(str_list, buf) == LIST_ADD_ERR)
             {
                 free(buf);
                 return LIST_ADD_ERR;
             }
         }
-        else if (params[1] && check_quotes(params[1]))
+        else if (cmd->num_par == 2 && check_quotes(cmd->params[1]))
         {
             str_num = str_list->str_count;
-            if (strcmp(params[1], "\"\"\"") == 0)
-                return insert_group(str_list, str_num);
-            buf = unqouting(params[1]);
-            while (check_sp_sym(buf))
-            {
-                buf = sp_sym_handler(buf, str_list, str_num);
-                str_num++;
-            }
-            if (add_new_str(str_list, str_num, buf) == LIST_ADD_ERR)
+            if (strcmp(cmd->params[1], "\"\"\"") == 0)
+                return insert_group(str_list);
+            buf = unqouting(cmd->params[1]);
+            buf = sp_sym_handler(buf);
+            if (add_new_str(str_list, buf) == LIST_ADD_ERR)
             {
                 free(buf);
                 return LIST_ADD_ERR;
@@ -330,17 +289,16 @@ int     insert_func(char **params, t_doub_list *str_list)
         }
         else
             return PARAMS_ERR;
-            
+        free(buf);    
     }
-    else if (strcmp (params[0], "symbol") == 0)
+    else if (strcmp (cmd->params[0], "symbol") == 0)
     {
-        if (params[4] && ft_atoi(params[1]) <= 0)
-            return PARAMS_ERR;
+        if (cmd->num_par == 4 && ft_atoi(cmd->params[1]) > 0)
+            return (insert_sym(str_list, cmd->params));
         else
-            return (insert_sym(str_list, params));
+            return PARAMS_ERR;
     }
     else
         return PARAMS_ERR;
-    free(buf);
     return 0;
 }

@@ -24,23 +24,26 @@ int     add_to_list(char *buf, t_doub_list *str_list);
 void    list_free(t_doub_list *str_list);
 
 int     print(t_cmd_list *cmd, t_doub_list *str_list);
-void    ft_putnstr(t_node *head, int n, int ws_col, int tabwidth, int c, 
-                                                                        int fl);
+void    ft_putnstr(t_node *head, int n, int ws_col, int tabwidth, int c, int fl);
 void    chg_size();
 void    print_strs(t_doub_list *str_list, struct winsize wz, int t);
 int     keys(t_doub_list *str_list);
-int     set_func(char **params, t_doub_list *str_list);
 int     ft_numcsize(int str_count);
 void    ft_sp_num(int num, int sp);
-int     insert_func(char **params, t_doub_list *str_list);
-int     add_new_str(t_doub_list *str_list, int str_num, char *params);
-int     check_quotes(char *str);
-int     check_sp_sym(char *str);
-char    *sp_sym_handler(char *str, t_doub_list *str_list, int str_num);
 void    ft_putstrnw(t_node *head, int c, int tabwidth, int fl);
-int     insert_group(t_doub_list *str_list, int str_num);
+
+int     set_func(t_cmd_list *cmd, t_doub_list *str_list);
+
+int     insert_func(t_cmd_list *cmd, t_doub_list *str_list);
+int     add_new_str(t_doub_list *cmd, char *str);
+int     insert_str(t_doub_list *cmd, char *str);
+int     check_quotes(char *str);
+char    *sp_sym_handler(char *str);
+int     insert_group(t_doub_list *str_list);
 int     insert_sym(t_doub_list *str_list, char **params);
-int     edit_func(char **parmas, t_doub_list *str_list);
+
+int     edit_func(t_cmd_list *cmd, t_doub_list *str_list);
+
 int     replace_func(char **params, t_doub_list *str_list);
 void    check_str(char *sample, char *add_str, t_node *head);
 char    *place_str(char *add_str, t_node *head, int k);

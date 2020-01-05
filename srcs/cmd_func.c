@@ -139,6 +139,7 @@ int     make_list(t_doub_list *str_list, FILE *fd)
     }
     else
         ft_putstr("File read\n");
+    str_list->flags[F_FILE] = 1;
     return 0;
 }
 

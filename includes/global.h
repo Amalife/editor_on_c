@@ -33,7 +33,8 @@ enum            e_err_list
     NOT_SAVED,
     STDIN_ERR,
     TAB_ERR,
-    STR_COUNT_ERR
+    STR_COUNT_ERR,
+    NO_FILE_ERR
 };
 
 enum            e_flags
@@ -45,6 +46,7 @@ enum            e_flags
     F_NO_WRAP,
     F_SIG,
     F_PRINT,
+    F_FILE
 };
 
 typedef struct  s_cmd_list

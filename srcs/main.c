@@ -61,16 +61,18 @@ int main()
                 str_list->flags[F_CHANGED] = 0;
                 break;
             case PRINT_NUM:
+                str_list->flags[F_PRINT] = 1;
                 r = print(cmd, str_list);
+                str_list->flags[F_PRINT] = 0;
                 break;
             case SET_NUM:
-                r = set_func(cmd->params, str_list);
+                r = set_func(cmd, str_list);
                 break;
             case INSERT_NUM:
-                r = insert_func(cmd->params, str_list);
+                r = insert_func(cmd, str_list);
                 break;
             case EDIT_NUM:
-                r = edit_func(cmd->params, str_list);
+                r = edit_func(cmd, str_list);
                 break;
             case REPLACE_NUM:
                 r = replace_func(cmd->params, str_list);

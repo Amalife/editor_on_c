@@ -2,7 +2,7 @@
 #include "global.h"
 #include "func_pro.h"
 
-t_doub_list     *g_str_list;
+t_doub_list     *str_list;
 t_node          *f_save;
 t_node          *save;
 int             fl_print;
@@ -147,16 +147,19 @@ int     keys(t_doub_list *str_list)
 
 void chg_size()
 {
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &wz);
-    g_str_list->flags[F_SIG] = 1;
-    g_str_list->head = save;
-    print_strs(g_str_list, wz, rng);
+    if (str_list->flags[F_PRINT])
+    {
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &wz);
+        str_list->flags[F_SIG] = 1;
+        str_list->head = save;
+        print_strs(str_list, wz, rng);
+    }
 }
 
 void    print_strs(t_doub_list *str_list, struct winsize wz, int rng)
 {
-    int     row;
-    int     k;
+    int row;
+    int k;
     
     row = 0;
     k = 0;
@@ -213,12 +216,14 @@ int     print(t_cmd_list *cmd, t_doub_list *str_list)
 
     sp_save = str_list->head;
     f_save = str_list->head;
-    g_str_list = str_list;
+    //g_str_list = str_list;
     fl_print = 0;
     rng = 0;
     start = 0;
     top_width = 0;
     cur_pos = 0;
+    if (str_list->flags[F_FILE] == 0)
+        return NO_FILE_ERR;
     if (cmd->num_par == 0 || cmd->num_par > 3)
         return PARAMS_ERR;
     if (strcmp(cmd->params[0], "range") == 0)
@@ -288,7 +293,7 @@ int     print(t_cmd_list *cmd, t_doub_list *str_list)
                 str_list->head = f_save;
             }
             save_str = str_list->head;
-            print_strs(g_str_list, wz, rng);
+            print_strs(str_list, wz, rng);
             fl_print = keys(str_list);
         }
     } while (fl_print);

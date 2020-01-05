@@ -23,10 +23,22 @@ char    *quote_str(char *str, int k)
 
     i = 0;
     buf = (char*)malloc(sizeof(char) * 3);
+    if (str[k] == '"' && str[k+1] == '"' && str[k+2] == '"')
+    {
+        buf = realloc(buf, sizeof(char) * 4);
+        while (i != 3)
+        {
+            buf[i] = str[k];
+            i++;
+            k++;
+        }
+        buf[i] = '\0';
+        return buf;
+    }
     buf[i] = str[k];
     i++;
     k++;
-    while (str[k] != '"' && str[k])
+    while ((str[k-1] == '\\' || str[k] != '"') && str[k])
     {
         buf = realloc(buf, sizeof(char) * (i + 3));
         buf[i] = str[k];

@@ -12,6 +12,6 @@
 #include <signal.h>
 
 #define NUM_OF_CMD 11
-#define NUM_OF_FLAGS 7
+#define NUM_OF_FLAGS 8
 
 #endif
