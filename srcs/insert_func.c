@@ -75,11 +75,11 @@ char    *sp_sym_handler(char *str)
 int     insert_str(t_doub_list *str_list, char *str)
 {
     t_node  *node;
-    t_node  *save;
+    t_node  *ptr;
     int     k;
 
     k = 0;
-    save = str_list->head;
+    ptr = str_list->head;
     node = (t_node*)malloc(sizeof(t_node));
     if (node)
     {
@@ -90,45 +90,43 @@ int     insert_str(t_doub_list *str_list, char *str)
             k++;
         }
         node->str[k] = '\0';
-        while (str_num != str_list->head->num && str_num != 0)
-            str_list->head = str_list->head->next;
+        while (str_num != 0 && str_num != ptr->num)
+            ptr = ptr->next;
         node->width = strlen(node->str);
         node->num = str_num + 1;
         str_list->str_count++;
         if (str_num == 0)
         {
             node->prev = NULL;
-            str_list->head->prev = node;
-            node->next = str_list->head;
-            save = node;
-            str_list->head = node->next;
+            ptr->prev = node;
+            node->next = ptr;
+            str_list->head = node;
         }
         else
         {
-            if (str_list->head->next)
+            if (ptr->next)
             {
-                str_list->head->next->prev = node;
-                node->next = str_list->head->next;
+                ptr->next->prev = node;
+                node->next = ptr->next;
             }
             else
                 node->next = NULL;
-            node->prev = str_list->head;
-            str_list->head->next = node;
-            str_list->head = str_list->head->next->next;
+            node->prev = ptr;
+            ptr->next = node;
+            ptr = ptr->next->next;
         }
         if (node->num == str_list->str_count)
             str_list->tail = node;
         ft_putstr("String inserted\n");
         str_list->flags[F_CHANGED] = 1;
-        while (str_list->head)
+        while (ptr)
         {
-            str_list->head->num++;
-            str_list->head = str_list->head->next;
+            ptr->num++;
+            ptr = ptr->next;
         }
     }
     else
         return LIST_ADD_ERR;
-    str_list->head = save;
     return 0;
 }
 
@@ -177,41 +175,76 @@ int     add_new_str(t_doub_list *str_list, char *str)
 
 int     insert_sym(t_doub_list *str_list, char **params)
 {
-    int     str;
+    char    *new_str = NULL;
+    char    *buf = NULL;
     int     pos;
     char    sym;
-    t_node  *save;
     int     i;
+    t_node  *ptr;
 
+    i = 0;
+    ptr = str_list->head;
     if (strlen(params[3]) == 1)
         sym = params[3][0];
+    else if (strlen(params[3]) == 2 && params[3][0] == '\\')
+    {
+        buf = sp_sym_handler(params[3]);
+        if (buf[1] == '\0')
+            sym = buf[0];
+        else
+        {
+            params[3] = buf;
+            return SP_SYM_ERR;
+        }
+    }
     else
         return PARAMS_ERR;
-    str = ft_atoi(params[1]);
-    if (str > str_list->str_count)
+    str_num = ft_atoi(params[1]);
+    if (str_num > str_list->str_count)
         return PARAMS_ERR;
     pos = ft_atoi(params[2]);
-    save = str_list->head;
-    while (str != str_list->head->num)
-        str_list->head = str_list->head->next;
-    str_list->head->str = realloc(str_list->head->str, sizeof(char) * 
-                                        (strlen(str_list->head->str) + 2));
-    i = strlen(str_list->head->str) + 1;
+    while (str_num != ptr->num)
+        ptr = ptr->next;
+    ptr->str = realloc(ptr->str, sizeof(char) * 
+                                        (strlen(ptr->str) + 2));
+    i = strlen(ptr->str) + 1;
     if (pos < 0)
         pos = 1;
-    else if (pos > str_list->head->width)
-        pos = str_list->head->width;
+    else if (pos > ptr->width)
+        pos = ptr->width;
     while (i != pos)
     {
-        str_list->head->str[i] = str_list->head->str[i-1];
+        ptr->str[i] = ptr->str[i-1];
         i--;
     }
-    str_list->head->str[i] = str_list->head->str[i-1];
-    str_list->head->str[pos-1] = sym;
-    str_list->head->width++;
-    str_list->head = save;
+    ptr->str[i] = ptr->str[i-1];
+    ptr->str[pos-1] = sym;
+    i = 0;
+    if (sym == '\n')
+    {
+        new_str = (char*)malloc(sizeof(char) * (strlen(ptr->str) + 2));
+        while (ptr->str[i])
+        {
+            new_str[i] = ptr->str[i];
+            i++;
+        }
+        new_str[i-1] = '\0';
+        delete_node(str_list, str_num);
+        str_num--;
+        if (add_new_str(str_list, new_str) == LIST_ADD_ERR)
+        {
+            free(new_str);
+            return LIST_ADD_ERR;
+        }
+    }
+    else
+        str_list->head->width++;
     str_list->flags[F_CHANGED] = 1;
     ft_putstr("Symbol inserted\n");
+    if (buf)
+        params[3] = buf;
+    if (new_str)
+        free(new_str);
     return 0;
 }
 

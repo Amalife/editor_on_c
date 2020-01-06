@@ -174,6 +174,8 @@ int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list)
         ft_putstr("You have an unsaved file\n");
         return NOT_SAVED;
     }
+    if (check_quotes(cmd->params[0]) == 0)
+        return PARAMS_ERR;
     file = unqouting(cmd->params[0]);
     fd = fopen(file, "r+");
     if (fd == NULL)

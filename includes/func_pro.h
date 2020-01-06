@@ -35,8 +35,8 @@ void    ft_putstrnw(t_node *head, int c, int tabwidth, int fl);
 int     set_func(t_cmd_list *cmd, t_doub_list *str_list);
 
 int     insert_func(t_cmd_list *cmd, t_doub_list *str_list);
-int     add_new_str(t_doub_list *cmd, char *str);
-int     insert_str(t_doub_list *cmd, char *str);
+int     add_new_str(t_doub_list *str_list, char *str);
+int     insert_str(t_doub_list *str_list, char *str);
 int     check_quotes(char *str);
 char    *sp_sym_handler(char *str);
 int     insert_group(t_doub_list *str_list);
@@ -49,4 +49,6 @@ void    check_str(char *sample, char *add_str, t_node *head);
 char    *place_str(char *add_str, t_node *head, int k);
 char    *ft_strcat(char *dest, char *src);
 
+int     delete_func(t_cmd_list *cmd, t_doub_list *str_list);
+void    delete_node(t_doub_list *cmd, int str_num);
 #endif

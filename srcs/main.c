@@ -77,6 +77,9 @@ int main()
             case REPLACE_NUM:
                 r = replace_func(cmd->params, str_list);
                 break;
+            case DELETE_NUM:
+                r = delete_func(cmd, str_list);
+                break;
             default:
                 ft_putstr("wrong command\n");
         }
