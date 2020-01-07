@@ -59,6 +59,7 @@ int edit_func(t_cmd_list *cmd, t_doub_list *str_list)
             free(new_str);
             return LIST_ADD_ERR;
         }
+        free(new_str);
     }
     else
         ptr->str[pos-1] = sym;
@@ -66,7 +67,5 @@ int edit_func(t_cmd_list *cmd, t_doub_list *str_list)
     ft_putstr("string edited\n");
     if (buf)
         cmd->params[3] = buf;
-    if (new_str)
-        free(new_str);
     return 0;
 }

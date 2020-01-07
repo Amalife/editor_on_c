@@ -143,7 +143,7 @@ int     make_list(t_doub_list *str_list, FILE *fd)
     return 0;
 }
 
-char    *unqouting(char *str)
+char    *unquoting(char *str)
 {
     char    *buf;
     int     j;
@@ -176,7 +176,7 @@ int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list)
     }
     if (check_quotes(cmd->params[0]) == 0)
         return PARAMS_ERR;
-    file = unqouting(cmd->params[0]);
+    file = unquoting(cmd->params[0]);
     fd = fopen(file, "r+");
     if (fd == NULL)
     {

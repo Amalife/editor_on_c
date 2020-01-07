@@ -64,23 +64,41 @@ int     delete_func(t_cmd_list *cmd, t_doub_list *str_list)
 
     if (str_list->flags[F_FILE] == 0)
         return NO_FILE_ERR;
-    if (cmd->num_par != 3)
+    if (cmd->num_par < 2 || cmd->num_par > 3)
         return PARAMS_ERR;
     ptr = str_list->head;
     if (strcmp(cmd->params[0], "range") == 0)
     {
-        if (ft_atoi(cmd->params[1]) > ft_atoi(cmd->params[2]))
-            return PARAMS_ERR;
-        if (ft_atoi(cmd->params[1]) > str_list->str_count || 
+        if (cmd->num_par == 3 && ft_atoi(cmd->params[1]) > 0)
+        {
+            if (ft_atoi(cmd->params[1]) > ft_atoi(cmd->params[2]))
+                return PARAMS_ERR;
+            if (ft_atoi(cmd->params[1]) > str_list->str_count || 
                                 ft_atoi(cmd->params[2]) > str_list->str_count)
-            return STR_COUNT_ERR;
-        rng = ft_atoi(cmd->params[1]);
-        while (rng != ptr->num)
-            ptr = ptr->next;
-        rng = ft_atoi(cmd->params[2]);
-        rng -= ft_atoi(cmd->params[1]);
-        rng++;
+                return STR_COUNT_ERR;
+            rng = ft_atoi(cmd->params[1]);
+            while (rng != ptr->num)
+                ptr = ptr->next;
+            rng = ft_atoi(cmd->params[2]);
+            rng -= ft_atoi(cmd->params[1]);
+            rng++;
+        }
+        else if (cmd->num_par == 2)
+        {
+            if (ft_atoi(cmd->params[1]) <= 0)
+                return PARAMS_ERR;
+            rng = ft_atoi(cmd->params[1]);
+            if (rng > str_list->str_count)
+                return PARAMS_ERR;
+            while (rng != ptr->num)
+                ptr = ptr->next;
+            rng = str_list->str_count - rng + 1;
+        }
+        else
+            return PARAMS_ERR;
     }
+    else
+        return PARAMS_ERR;
     while (rng)
     {
         if (ptr->next)

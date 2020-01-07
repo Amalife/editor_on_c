@@ -75,7 +75,7 @@ int main()
                 r = edit_func(cmd, str_list);
                 break;
             case REPLACE_NUM:
-                r = replace_func(cmd->params, str_list);
+                r = replace_func(cmd, str_list);
                 break;
             case DELETE_NUM:
                 r = delete_func(cmd, str_list);

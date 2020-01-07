@@ -7,6 +7,7 @@ void    ft_putchar(char c);
 void    ft_putstr(char *str);
 void    ft_putnbr(int num);
 int     ft_atoi(char *str);
+char    *ft_strcat(char *dest, char *app);
 
 void    cmd_template(char *str, t_cmd_list *cmd);
 int     check_last(char *str, int k);
@@ -19,7 +20,7 @@ int     editor_exit(t_cmd_list *cmd, t_doub_list *str_list);
 int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list);
 char    *read_file(FILE *fd);
 int     make_list(t_doub_list *str_list, FILE *fd);
-char    *unqouting(char *str);
+char    *unquoting(char *str);
 int     add_to_list(char *buf, t_doub_list *str_list);
 void    list_free(t_doub_list *str_list);
 
@@ -44,10 +45,9 @@ int     insert_sym(t_doub_list *str_list, char **params);
 
 int     edit_func(t_cmd_list *cmd, t_doub_list *str_list);
 
-int     replace_func(char **params, t_doub_list *str_list);
-void    check_str(char *sample, char *add_str, t_node *head);
-char    *place_str(char *add_str, t_node *head, int k);
-char    *ft_strcat(char *dest, char *src);
+int     replace_func(t_cmd_list *cmd, t_doub_list *str_list);
+char    *place_str(char *sample, char *str_add, char *str);
+int     replace_string(t_doub_list *str_list, char *new_str);
 
 int     delete_func(t_cmd_list *cmd, t_doub_list *str_list);
 void    delete_node(t_doub_list *cmd, int str_num);

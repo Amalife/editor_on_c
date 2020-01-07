@@ -236,6 +236,7 @@ int     insert_sym(t_doub_list *str_list, char **params)
             free(new_str);
             return LIST_ADD_ERR;
         }
+        free(new_str);
     }
     else
         str_list->head->width++;
@@ -243,8 +244,6 @@ int     insert_sym(t_doub_list *str_list, char **params)
     ft_putstr("Symbol inserted\n");
     if (buf)
         params[3] = buf;
-    if (new_str)
-        free(new_str);
     return 0;
 }
 
@@ -299,7 +298,7 @@ int     insert_func(t_cmd_list *cmd, t_doub_list *str_list)
         {
             if (strcmp(cmd->params[2], "\"\"\"") == 0)
                 return insert_group(str_list);
-            buf = unqouting(cmd->params[2]);
+            buf = unquoting(cmd->params[2]);
             buf = sp_sym_handler(buf);
             if (add_new_str(str_list, buf) == LIST_ADD_ERR)
             {
@@ -312,7 +311,7 @@ int     insert_func(t_cmd_list *cmd, t_doub_list *str_list)
             str_num = str_list->str_count;
             if (strcmp(cmd->params[1], "\"\"\"") == 0)
                 return insert_group(str_list);
-            buf = unqouting(cmd->params[1]);
+            buf = unquoting(cmd->params[1]);
             buf = sp_sym_handler(buf);
             if (add_new_str(str_list, buf) == LIST_ADD_ERR)
             {
