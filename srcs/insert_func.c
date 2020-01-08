@@ -97,10 +97,20 @@ int     insert_str(t_doub_list *str_list, char *str)
         str_list->str_count++;
         if (str_num == 0)
         {
-            node->prev = NULL;
-            ptr->prev = node;
-            node->next = ptr;
-            str_list->head = node;
+            if (str_list->head == NULL && str_list->tail == NULL)
+            {
+                str_list->head = node;
+                str_list->tail = node;
+                node->prev = NULL;
+                node->next = NULL;
+            }
+            else
+            {
+                node->prev = NULL;
+                ptr->prev = node;
+                node->next = ptr;
+                str_list->head = node;
+            }
         }
         else
         {
@@ -117,7 +127,6 @@ int     insert_str(t_doub_list *str_list, char *str)
         }
         if (node->num == str_list->str_count)
             str_list->tail = node;
-        ft_putstr("String inserted\n");
         str_list->flags[F_CHANGED] = 1;
         while (ptr)
         {
@@ -322,6 +331,7 @@ int     insert_func(t_cmd_list *cmd, t_doub_list *str_list)
         else
             return PARAMS_ERR;
         free(buf);    
+        ft_putstr("String inserted\n");
     }
     else if (strcmp (cmd->params[0], "symbol") == 0)
     {

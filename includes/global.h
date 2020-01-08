@@ -35,7 +35,8 @@ enum            e_err_list
     TAB_ERR,
     STR_COUNT_ERR,
     NO_FILE_ERR,
-    SP_SYM_ERR
+    SP_SYM_ERR,
+    NO_FILE_LINK
 };
 
 enum            e_flags

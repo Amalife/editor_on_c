@@ -15,9 +15,12 @@ char    *quote_str(char *str, int k);
 char    *sim_str(char *str, int k);
 char    *make_str(char *str, int k);
 int     read_n_det(t_cmd_list *cmd);
+void    help_func();
+void    err_check(int r);
 
 int     editor_exit(t_cmd_list *cmd, t_doub_list *str_list);
 int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list);
+int     editor_write(t_cmd_list *cmd, t_doub_list *str_list);
 char    *read_file(FILE *fd);
 int     make_list(t_doub_list *str_list, FILE *fd);
 char    *unquoting(char *str);

@@ -21,6 +21,43 @@ int     editor_exit(t_cmd_list *cmd, t_doub_list *str_list)
     return 0;
 }
 
+int     editor_write(t_cmd_list *cmd, t_doub_list *str_list)
+{
+    FILE    *fd;
+    char    *path;
+    t_node  *ptr;
+    
+    ptr = str_list->head;
+    if (cmd->num_par == 0)
+    {
+        if (str_list->file_link == NULL)
+            return NO_FILE_LINK;
+        fd = fopen(str_list->file_link, "w+");
+        while (ptr)
+        {
+            fwrite(ptr->str, sizeof(char), strlen(ptr->str), fd);
+            ptr = ptr->next;
+        }
+        fclose(fd);
+    }
+    else if (cmd->num_par == 1 && check_quotes(cmd->params[0]))
+    {
+        path = unquoting(cmd->params[0]);
+        fd = fopen(path, "w+");
+        while (ptr)
+        {
+            fwrite(ptr->str, sizeof(char), strlen(ptr->str), fd);
+            ptr = ptr->next;
+        }
+        fclose(fd);
+        free(path);
+    }
+    else
+        return PARAMS_ERR;
+    ft_putstr("File saved\n");
+    return 0;
+}
+
 void    list_free(t_doub_list *str_list)
 {
     while (str_list->tail)
@@ -169,11 +206,6 @@ int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list)
 
     if (cmd->num_par != 1)
         return PARAMS_ERR;
-    if (str_list->flags[F_CHANGED])
-    {
-        ft_putstr("You have an unsaved file\n");
-        return NOT_SAVED;
-    }
     if (check_quotes(cmd->params[0]) == 0)
         return PARAMS_ERR;
     file = unquoting(cmd->params[0]);
@@ -190,9 +222,6 @@ int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list)
         str_list->file_link = file;
     }
     else
-    {
-        str_list->flags[F_CHANGED] = 1;
         free(file);
-    }
     return make_list(str_list, fd);
 }

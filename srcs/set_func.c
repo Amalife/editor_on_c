@@ -4,9 +4,9 @@
 
 int set_func(t_cmd_list *cmd, t_doub_list *str_list)
 {
-    if (cmd->num_par != 2)
+    if (cmd->num_par < 1 || cmd->num_par > 2)
         return PARAMS_ERR;
-    if (strcmp(cmd->params[0], "numbers") == 0)
+    if (strcmp(cmd->params[0], "numbers") == 0 && cmd->num_par == 2)
         if (strcmp(cmd->params[1], "yes") == 0)
         {
             str_list->flags[F_NUM] = 1;
@@ -19,7 +19,7 @@ int set_func(t_cmd_list *cmd, t_doub_list *str_list)
         }
         else
             return PARAMS_ERR;
-    else if (strcmp(cmd->params[0], "wrap") == 0)
+    else if (strcmp(cmd->params[0], "wrap") == 0 && cmd->num_par == 2)
         if (strcmp(cmd->params[1], "yes") == 0)
         {
             str_list->flags[F_NO_WRAP] = 0;
@@ -32,7 +32,7 @@ int set_func(t_cmd_list *cmd, t_doub_list *str_list)
         }
         else
             return PARAMS_ERR;
-    else if (strcmp(cmd->params[0], "tabwidth") == 0 && cmd->params[1])
+    else if (strcmp(cmd->params[0], "tabwidth") == 0 && cmd->num_par == 2)
     {
         if (ft_atoi(cmd->params[1]) > 0)
         {
@@ -43,6 +43,26 @@ int set_func(t_cmd_list *cmd, t_doub_list *str_list)
         }
         else 
             return TAB_ERR;
+    }
+    else if (strcmp(cmd->params[0], "name") == 0)
+    {
+        if (cmd->num_par == 2)
+        {
+            if (check_quotes(cmd->params[1]))
+            {
+                free(str_list->file_link);
+                str_list->file_link = unquoting(cmd->params[1]);
+            }
+            else
+                return PARAMS_ERR;
+        }
+        else
+        {
+            if (str_list->file_link)
+                free(str_list->file_link);
+            str_list->file_link = NULL;
+        }
+        ft_putstr("Name changed\n");
     }
     else
         return PARAMS_ERR;
