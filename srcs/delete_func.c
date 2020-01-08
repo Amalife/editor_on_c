@@ -2,13 +2,15 @@
 #include "func_pro.h"
 #include "global.h"
 
-void    delete_node(t_doub_list *str_list, int str_num)
+int str_num;
+
+void    delete_node(t_doub_list *str_list, int num)
 {
     t_node  *save_tail = NULL;
     t_node  *ptr;
 
     ptr = str_list->head;
-    while (ptr->num != str_num)
+    while (ptr->num != num)
         ptr = ptr->next;
     free(ptr->str);
     if (ptr->next == NULL && ptr->prev == NULL)
@@ -33,7 +35,7 @@ void    delete_node(t_doub_list *str_list, int str_num)
         //save = str_list->head;
         str_list->str_count--;
         save_tail = str_list->tail;
-        while (str_list->tail->num != str_num + 1)
+        while (str_list->tail->num != num + 1)
         {
             str_list->tail->num--;
             str_list->tail = str_list->tail->prev;
@@ -48,7 +50,7 @@ void    delete_node(t_doub_list *str_list, int str_num)
         free(ptr);
         str_list->str_count--;
         save_tail = str_list->tail;
-        while (str_list->tail->num != str_num - 1)
+        while (str_list->tail->num != num - 1)
         {
             str_list->tail->num--;
             str_list->tail = str_list->tail->prev;
@@ -96,23 +98,25 @@ int     delete_func(t_cmd_list *cmd, t_doub_list *str_list)
         }
         else
             return PARAMS_ERR;
+        while (rng)
+        {
+            if (ptr->next)
+            {
+                ptr = ptr->next;
+                delete_node(str_list, ptr->prev->num);
+            }
+            else
+                delete_node(str_list, ptr->num);
+            rng--;
+        }
+        ft_putstr("String deleted\n");
+        str_list->flags[F_CHANGED] = 1;
+        //if (str_list->head)
+            //str_list->head = save;
     }
+    else if (strcmp(cmd->params[0], "comments") == 0 && cmd->num_par == 2)
+        return com_handler(str_list, cmd->params[1]);
     else
         return PARAMS_ERR;
-    while (rng)
-    {
-        if (ptr->next)
-        {
-            ptr = ptr->next;
-            delete_node(str_list, ptr->prev->num);
-        }
-        else
-            delete_node(str_list, ptr->num);
-        rng--;
-    }
-    ft_putstr("String deleted\n");
-    str_list->flags[F_CHANGED] = 1;
-    //if (str_list->head)
-      //  str_list->head = save;
     return 0;
 }

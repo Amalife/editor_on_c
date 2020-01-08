@@ -50,5 +50,13 @@ char    *place_str(char *sample, char *str_add, char *str);
 int     replace_string(t_doub_list *str_list, char *new_str);
 
 int     delete_func(t_cmd_list *cmd, t_doub_list *str_list);
-void    delete_node(t_doub_list *cmd, int str_num);
+void    delete_node(t_doub_list *str_list, int str_num);
+int     com_handler(t_doub_list *str_list, char *com_type);
+void    delete_pascal(t_doub_list *str_list);
+void    delete_c(t_doub_list *str_list);
+void    delete_cpp(t_doub_list *str_list);
+void    delete_shell(t_doub_list *str_list);
+char    *com_str(char sym);
+char    *block_com_str(char sym);
+
 #endif
