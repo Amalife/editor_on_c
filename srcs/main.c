@@ -21,9 +21,9 @@ void    init(char **argv, int argc)
     signal(SIGWINCH, chg_size);
     if (argc == 2)
     {
-        fd = fopen(argv[1], "r+");
+        fd = fopen(argv[1], "r");
         if (fd == NULL)
-            fd = fopen(argv[1], "w+");
+            fd = fopen(argv[1], "w");
         file = (char*)malloc(sizeof(char) * (strlen(argv[1]) + 1));
         while (argv[1][k])
         {
@@ -56,12 +56,14 @@ int     main(int argc, char **argv)
         size = 0;
         //i = 0;
         buf = (char*)malloc(sizeof(char));
-        while ((ch = getchar()) != '\n')
+        while ((ch = getchar()) != '\n' && ch != EOF)
         {
             size++;
             buf = realloc(buf, sizeof(char) * (size + 1));
             buf[size-1] = ch;
         }
+        if (ch == EOF)
+            ft_putchar('\n');
         buf[size] = '\0';
         cmd = (t_cmd_list*)malloc(sizeof(t_cmd_list));
         cmd_template(buf, cmd);

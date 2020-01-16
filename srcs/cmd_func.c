@@ -32,7 +32,7 @@ int     editor_write(t_cmd_list *cmd, t_doub_list *str_list)
     {
         if (str_list->file_link == NULL)
             return NO_FILE_LINK;
-        fd = fopen(str_list->file_link, "w+");
+        fd = fopen(str_list->file_link, "w");
         while (ptr)
         {
             fwrite(ptr->str, sizeof(char), strlen(ptr->str), fd);
@@ -43,7 +43,7 @@ int     editor_write(t_cmd_list *cmd, t_doub_list *str_list)
     else if (cmd->num_par == 1 && check_quotes(cmd->params[0]))
     {
         path = unquoting(cmd->params[0]);
-        fd = fopen(path, "w+");
+        fd = fopen(path, "w");
         while (ptr)
         {
             fwrite(ptr->str, sizeof(char), strlen(ptr->str), fd);
@@ -209,7 +209,7 @@ int     editor_read_n_open(t_cmd_list *cmd, t_doub_list *str_list)
     if (check_quotes(cmd->params[0]) == 0)
         return PARAMS_ERR;
     file = unquoting(cmd->params[0]);
-    fd = fopen(file, "r+");
+    fd = fopen(file, "r");
     if (fd == NULL)
     {
         free(file);
