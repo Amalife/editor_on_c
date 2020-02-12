@@ -129,6 +129,7 @@ int     keys(t_doub_list *str_list)
     char    ch;
 
     ch = getchar();
+    //printf("\n%c\n", ch);
     if ((ch != 'q') && (str_list->head || ch != ' '))
     {
         if (ch == ' ')
@@ -152,6 +153,7 @@ void chg_size()
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &wz);
         str_list->flags[F_SIG] = 1;
         str_list->head = save;
+        ft_putstr("\e[2J\e[3J\e[r");
         print_strs(str_list, wz, rng);
     }
 }
@@ -293,9 +295,13 @@ int     print(t_cmd_list *cmd, t_doub_list *str_list)
                 str_list->head = f_save;
             }
             save_str = str_list->head;
+            ft_putstr("\e[2J\e[3J\e[r");
             print_strs(str_list, wz, rng);
             fl_print = keys(str_list);
+            //printf("\n%i\n", fl_print);
         }
+        else
+            fl_print = keys(str_list);
     } while (fl_print);
     ft_putchar('\n');
     str_list->head = sp_save;
